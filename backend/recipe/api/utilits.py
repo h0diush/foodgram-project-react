@@ -77,11 +77,11 @@ def _download_shop_list(pk=None):
     writer = csv.writer(response_download)
     writer.writerow(
         [
-            'Name',
-            'Description',
-            'Ingredients',
-            'Tags',
-            'Cooking time'
+            'Название',
+            'Описание',
+            'Ингредиенты',
+            'Теги',
+            'Время приготовления '
         ])
     shop_list = Recipe.objects.get(pk=pk)
     ingredients = shop_list.ingredients.all()
@@ -97,5 +97,5 @@ def _download_shop_list(pk=None):
             shop_list.cooking_time
         ]
     )
-    response_download['Content-Disposition'] = f'attachment; filename="{shop_list.name}.csv"'
+    response_download['Content-Disposition'] = f'attachment; filename="{shop_list.pk}_{shop_list.name}.csv"'
     return response_download
