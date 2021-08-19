@@ -2,8 +2,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet as BaseUserViewSet
 from rest_framework import response, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import (SAFE_METHODS,
-                                        IsAuthenticated,
+from rest_framework.permissions import (SAFE_METHODS, IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 
 from ..models import Favorite, Follow, Ingredients, Recipe, ShopList, Tag, User
@@ -13,7 +12,9 @@ from .serializers import (IngredientsCreateSerializer,
                           IngredientsListSerializer, RecipeCreateSerializer,
                           RecipeListSerializer, TagSerializers,
                           UserFollowSerializer)
-from .utilits import _get_recipe_in_shop_list_and_favorite, _user_subscription_to_post_author
+from .utilits import (_download_shop_list,
+                      _get_recipe_in_shop_list_and_favorite,
+                      _user_subscription_to_post_author)
 
 
 class TagViewSet(viewsets.ModelViewSet):
@@ -71,6 +72,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
         recipe, user = self._get_user_and_recipe(request)
         return _get_recipe_in_shop_list_and_favorite(recipe, user, request, Favorite)
 
+    @action(detail=True, permission_classes=[IsAuthenticated])
+    def download_shopping_cart(self, request, pk=None):
+        return _download_shop_list(pk)
+        
 
 class UserViewSet(BaseUserViewSet):
 

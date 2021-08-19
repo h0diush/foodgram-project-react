@@ -1,5 +1,9 @@
+import csv
+
+from django.http import HttpResponse
 from rest_framework import response, status
-from ..models import Follow, ShopList, User
+
+from ..models import Follow, Recipe, ShopList, User
 from .serializers import UserFollowSerializer
 
 
@@ -63,6 +67,35 @@ def _user_subscription_to_post_author(author, user, request, obj):
             except:
                 return response.Response({"errors": "string"}, status=status.HTTP_400_BAD_REQUEST)
     return response.Response(
-        {"detail": "Учетные данные не были предоставлены."}, 
+        {"detail": "Учетные данные не были предоставлены."},
         status=status.HTTP_403_FORBIDDEN
     )
+
+
+def _download_shop_list(pk=None):
+    response_download = HttpResponse(content_type='text/csv')
+    writer = csv.writer(response_download)
+    writer.writerow(
+        [
+            'Name',
+            'Description',
+            'Ingredients',
+            'Tags',
+            'Cooking time'
+        ])
+    shop_list = Recipe.objects.get(pk=pk)
+    ingredients = shop_list.ingredients.all()
+    tags = shop_list.tags.all()
+
+    writer.writerow(
+        [
+            shop_list.name,
+            shop_list.text,
+            ' | '.join(
+                [f'{_.name} - {_.amount} {_.measurement_unit}' for _ in ingredients]),
+            ' | '.join([str(_) for _ in tags]),
+            shop_list.cooking_time
+        ]
+    )
+    response_download['Content-Disposition'] = f'attachment; filename="{shop_list.name}.csv"'
+    return response_download
