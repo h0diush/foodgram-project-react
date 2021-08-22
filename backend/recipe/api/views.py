@@ -1,6 +1,7 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet as BaseUserViewSet
 from rest_framework import response, status, viewsets
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import action
 from rest_framework.permissions import (SAFE_METHODS, IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
@@ -21,6 +22,7 @@ class TagViewSet(viewsets.ModelViewSet):
     serializer_class = TagSerializers
     queryset = Tag.objects.all()
     permission_classes = [IsAdminOrReadAnllyUser]
+    pagination_class = PageNumberPagination
 
 
 class IngredientViewSet(viewsets.ModelViewSet):

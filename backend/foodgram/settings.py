@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv
-
+# from rest_framework.pagination import LimitOffsetPagination
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'djoser',
     'django_filters',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -56,7 +57,7 @@ ROOT_URLCONF = 'foodgram.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, "build")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -126,6 +127,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     # 'DEFAULT_RENDERER_CLASSES': (
     #     'rest_framework.renderers.JSONRenderer',
     # ),
@@ -235,10 +237,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+STATIC_ROOT = os.path.join(BASE_DIR, 'backend_static')
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+# STATICFILES_DIRS = (
+#   os.path.join(BASE_DIR, 'static/'),
+# )
 
 
 BASE_URL = 'http://api.foodgram.students.nomoredomains.icu'

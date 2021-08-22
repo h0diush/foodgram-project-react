@@ -4,23 +4,18 @@ from django.http import HttpResponse
 from rest_framework import response, status
 
 from ..models import Follow, Recipe, ShopList, User
-from .serializers import UserFollowSerializer
+from .serializers import UserFollowSerializer, RecipeFavoriteOrShopList
 
 
 def _get_recipe_in_shop_list_and_favorite(recipe, user, request, obj):
 
-    msg = {
-        'id': recipe.id,
-        'name': recipe.name,
-        'image': f'{str(recipe.image)}',
-        'cooking_time': recipe.cooking_time
-    }
+    serializer = RecipeFavoriteOrShopList(Recipe.objects.get(pk=recipe.id))
 
     if user.is_authenticated:
         if request.method == 'GET':
             shop_list, created = obj.objects.get_or_create(
                 user=user, recipe=recipe)
-            return response.Response(msg, status=status.HTTP_201_CREATED) if created else  \
+            return response.Response(serializer.data, status=status.HTTP_201_CREATED) if created else  \
                 response.Response({"errors": "string"},
                                   status=status.HTTP_400_BAD_REQUEST)
 
@@ -78,23 +73,16 @@ def _download_shop_list(pk=None):
     writer.writerow(
         [
             'Название',
-            'Описание',
             'Ингредиенты',
-            'Теги',
-            'Время приготовления '
         ])
     shop_list = Recipe.objects.get(pk=pk)
     ingredients = shop_list.ingredients.all()
-    tags = shop_list.tags.all()
 
     writer.writerow(
         [
             shop_list.name,
-            shop_list.text,
             ' | '.join(
                 [f'{_.name} - {_.amount} {_.measurement_unit}' for _ in ingredients]),
-            ' | '.join([str(_) for _ in tags]),
-            shop_list.cooking_time
         ]
     )
     response_download['Content-Disposition'] = f'attachment; filename="{shop_list.pk}_{shop_list.name}.csv"'

@@ -140,3 +140,15 @@ class UserFollowSerializer(serializers.ModelSerializer):
     def count(self, obj):
         count = Recipe.objects.filter(author__username=obj.username).count()
         return count
+
+
+class RecipeFavoriteOrShopList(serializers.ModelSerializer):
+
+    class Meta:
+        model = Recipe
+        fields = (
+            'id',
+            'name',
+            'image',
+            'cooking_time',
+        )
