@@ -79,7 +79,7 @@ class Follow(models.Model):
 class ShopList(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE,
-                             related_name='user_in_shops_list', verbose_name='Пользователь')
+                             related_name='shops_list', verbose_name='Пользователь')
     recipe = models.ForeignKey(
         Recipe, on_delete=models.CASCADE, related_name='shops_list', verbose_name='Рецепты')
 

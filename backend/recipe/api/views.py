@@ -7,7 +7,7 @@ from rest_framework.permissions import (SAFE_METHODS, IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 
 from ..models import Favorite, Follow, Ingredients, Recipe, ShopList, Tag, User
-from .filters import IngredientsFilter
+from .filters import IngredientsFilter, RecipeFilter
 from .permissions import IsAdminOrReadAnllyUser, IsAuthorRecipeOrReadOnly
 from .serializers import (IngredientsCreateSerializer,
                           IngredientsListSerializer, RecipeCreateSerializer,
@@ -42,6 +42,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     permission_classes = [IsAuthorRecipeOrReadOnly]
     queryset = Recipe.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = RecipeFilter
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -74,9 +76,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         recipe, user = self._get_user_and_recipe(request)
         return _get_recipe_in_shop_list_and_favorite(recipe, user, request, Favorite)
 
-    @action(detail=True, permission_classes=[IsAuthenticated])
-    def download_shopping_cart(self, request, pk=None):
-        return _download_shop_list(pk)
+    @action(detail=False, permission_classes=[IsAuthenticated])
+    def download_shopping_cart(self, request):
+        return _download_shop_list(request.user)
         
 
 class UserViewSet(BaseUserViewSet):

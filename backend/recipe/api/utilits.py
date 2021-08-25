@@ -67,23 +67,24 @@ def _user_subscription_to_post_author(author, user, request, obj):
     )
 
 
-def _download_shop_list(pk=None):
+def _download_shop_list(user):
     response_download = HttpResponse(content_type='text/csv')
     writer = csv.writer(response_download)
     writer.writerow(
         [
             'Название',
-            'Ингредиенты',
+            'Количество',
+            'Единица измерения'
         ])
-    shop_list = Recipe.objects.get(pk=pk)
-    ingredients = shop_list.ingredients.all()
-
-    writer.writerow(
-        [
-            shop_list.name,
-            ' | '.join(
-                [f'{_.name} - {_.amount} {_.measurement_unit}' for _ in ingredients]),
-        ]
-    )
-    response_download['Content-Disposition'] = f'attachment; filename="{shop_list.pk}_{shop_list.name}.csv"'
+    recipes = Recipe.objects.filter(shops_list__user=user)
+    for recipe in recipes:
+        for ingredient in recipe.ingredients.all():
+            writer.writerow(
+                [
+                    ingredient.name,
+                    ingredient.amount,
+                    ingredient.measurement_unit
+                ]
+            )
+    response_download['Content-Disposition'] = f'attachment; filename="shopping_list.csv"'
     return response_download
