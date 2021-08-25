@@ -1,8 +1,9 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet as BaseUserViewSet
-from rest_framework import response, status, viewsets
-from rest_framework.pagination import PageNumberPagination
+from rest_framework import response, status, views, viewsets
 from rest_framework.decorators import action
+from rest_framework.filters import SearchFilter
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import (SAFE_METHODS, IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 
@@ -13,16 +14,17 @@ from .serializers import (IngredientsCreateSerializer,
                           IngredientsListSerializer, RecipeCreateSerializer,
                           RecipeListSerializer, TagSerializers,
                           UserFollowSerializer)
-from .utilits import (_download_shop_list,
-                      _get_recipe_in_shop_list_and_favorite,
-                      _user_subscription_to_post_author)
+from .utilities import (_download_shop_list,
+                        _get_recipe_in_shop_list_and_favorite,
+                        _user_subscription_to_post_author)
 
 
-class TagViewSet(viewsets.ModelViewSet):
+class TagViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = TagSerializers
+    pagination_class = None
     queryset = Tag.objects.all()
+    filter_backends = [DjangoFilterBackend, SearchFilter]
     permission_classes = [IsAdminOrReadAnllyUser]
-    pagination_class = PageNumberPagination
 
 
 class IngredientViewSet(viewsets.ModelViewSet):
@@ -79,9 +81,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(detail=False, permission_classes=[IsAuthenticated])
     def download_shopping_cart(self, request):
         return _download_shop_list(request.user)
-        
+
 
 class UserViewSet(BaseUserViewSet):
+    pagination_class = PageNumberPagination
+    page_size = 6
 
     def _get_user_and_author(self, request):
         author = self.get_object()
