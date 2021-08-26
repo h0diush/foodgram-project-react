@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.db import models
 
-
 User = get_user_model()
 
 
@@ -48,17 +47,22 @@ class Tag(models.Model):
 
 
 class Ingredients(models.Model):
-
-    name = models.CharField('Название', max_length=155)
-    amount = models.PositiveSmallIntegerField('Количество')
-    measurement_unit = models.CharField('Еденица измерения', max_length=155)
-
-    def __str__(self) -> str:
-        return self.name
+    name = models.CharField(
+        verbose_name='Название',
+        max_length=200,
+    )
+    measurement_unit = models.CharField(
+        verbose_name='Еденица измерения',
+        max_length=200,
+    )
 
     class Meta:
-        verbose_name = 'Ингредиент'
-        verbose_name_plural = 'Ингредиенты'
+        ordering = ('name', )
+        verbose_name = 'ингредиент'
+        verbose_name_plural = 'ингредиенты'
+
+    def __str__(self):
+        return f'{self.name}, {self.measurement_unit}'
 
 
 class Follow(models.Model):
@@ -104,3 +108,16 @@ class Favorite(models.Model):
     class Meta:
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранные'
+
+
+class IngredientRecord(models.Model):
+
+    ingredient = models.ForeignKey(Ingredients, on_delete=models.CASCADE)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    amount = models.FloatField()
+
+    def __str__(self):
+        return f'{self.ingredient} - {self.amount}'
+
+    def __unicode__(self):
+        return f'?{self.recipe}: {self.ingredient} - {self.amount}'

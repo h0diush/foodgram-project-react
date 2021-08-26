@@ -15,6 +15,7 @@ django-templated-mail==1.1.1
 djangorestframework==3.11.0
 djangorestframework-simplejwt==4.7.2
 djoser==2.1.0
+drf_extra_fields
 drf-spectacular
 gunicorn 
 idna==2.9

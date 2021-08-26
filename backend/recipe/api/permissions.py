@@ -14,13 +14,11 @@ class IsAdminOrReadAnllyUser(BasePermission):
 
 class IsAuthorRecipeOrReadOnly(BasePermission):
     def has_permission(self, request, view):
-        return (
-            request.method == SAFE_METHODS[0] or
-            request.user.is_authenticated
-        )
+        if request.method == 'POST':
+            return request.user.is_authenticated
+        return True
 
     def has_object_permission(self, request, view, obj):
-        if request.method in SAFE_METHODS[0]:
+        if request.method in SAFE_METHODS or request.user.is_superuser:
             return True
-        if (request.user.is_authenticated or request.method in ['PATCH', 'DELETE']):
-            return obj.author == request.user
+        return request.user == obj.author
