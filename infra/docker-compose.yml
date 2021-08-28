@@ -1,12 +1,12 @@
 version: '3.7'
 services:
 
-  # db:
-  #   image: postgres:12.4
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data/
-  #   env_file:
-  #     - ./.env
+  db:
+    image: postgres:12.4
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env
 
   frontend:
     build:
@@ -14,8 +14,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - frontend_data:/app/build/
-    # depends_on:
-    #   - db
+    depends_on:
+      - db
 
   web:
     build:
@@ -25,8 +25,8 @@ services:
     volumes:
       - static_value:/code/backend_static/
       - media_value:/code/media/
-    # depends_on:
-    #   - db
+    depends_on:
+      - db
     env_file:
       - ./.env
 
@@ -46,7 +46,7 @@ services:
       - frontend
 
 volumes:
-  # postgres_data:
+  postgres_data:
   frontend_data:
   static_value:
   media_value:
