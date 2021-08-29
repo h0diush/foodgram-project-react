@@ -14,7 +14,8 @@ class UserCreateSerializer(serializers.ModelSerializer):
                   'first_name', 'last_name', 'password')
 
     def validate(self, attrs):
-        l_name, f_name, email = attrs['last_name'], attrs['first_name'], attrs['email']
+        l_name, f_name, email = \
+            attrs['last_name'], attrs['first_name'], attrs['email']
         if l_name == '' or f_name == '':
             raise serializers.ValidationError('This field is required')
         if User.objects.filter(email=email).exists():
@@ -94,7 +95,9 @@ class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ('id', 'tags', 'author', 'ingredients', 'is_favorited',
-                  'is_in_shopping_cart', 'name', 'image', 'text', 'cooking_time')
+                  'is_in_shopping_cart', 'name', 'image', 
+                  'text', 'cooking_time'
+        )
 
     def favorited(self, obj):
         request = self.context.get('request')
