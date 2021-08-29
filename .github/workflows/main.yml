@@ -75,10 +75,10 @@ jobs:
             echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
             echo DB_HOST=${{ secrets.DB_HOST }} >> .env
             echo DB_PORT=${{ secrets.DB_PORT }} >> .env
-            echo DB_NAME=${{ secrets.EMAIL_HOST }} >> .env
-            echo DB_NAME=${{ secrets.EMAIL_HOST_USER }} >> .env
-            echo DB_NAME=${{ secrets.EMAIL_HOST_PASSWORD }} >> .env
-            echo DB_NAME=${{ secrets.EMAIL_PORT }} >> .env
+            echo EMAIL_HOST=${{ secrets.EMAIL_HOST }} >> .env
+            echo EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }} >> .env
+            echo EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }} >> .env
+            echo EMAIL_PORT=${{ secrets.EMAIL_PORT }} >> .env
             sudo docker-compose up -d
             sudo docker-compose exec -T web python manage.py makemigrations
             sudo docker-compose exec -T web python manage.py migrate --noinput
