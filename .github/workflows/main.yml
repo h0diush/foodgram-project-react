@@ -62,7 +62,7 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          # stack_file_name: docker-compose.yml
+          stack_file_name: docker-compose.yml
           script: |
             sudo docker pull h0diush/foodgram_backend
             sudo docker pull h0diush/foodgram_frontend
@@ -81,7 +81,7 @@ jobs:
             echo EMAIL_PORT=${{ secrets.EMAIL_PORT }} >> .env
 
             sudo docker-compose up -d
-
+            sudo docker-compose exec -T web python manage.py flush --no-input
             sudo docker-compose exec -T web python manage.py makemigrations
             sudo docker-compose exec -T web python manage.py migrate --noinput
             sudo docker-compose exec -T web python manage.py loaddata ingredients.json
