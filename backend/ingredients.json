@@ -1,7 +1,7 @@
 [
-    {"model": "recipe.tags", "pk": 1, "fields":{"name": "Завтрак", "color":"#00FF00", "slug": "zavtrak"}},
-    {"model": "recipe.tags", "pk": 2, "fields":{"name": "Обед", "color":"#FF0000", "slug": "obed"}},
-    {"model": "recipe.tags", "pk": 3, "fields":{"name": "Ужин", "color":"#FFD700", "slug": "uzhin"}},
+    {"model": "recipe.tag", "pk": 1, "fields":{"name": "Завтрак", "color":"#00FF00", "slug": "zavtrak"}},
+    {"model": "recipe.tag", "pk": 2, "fields":{"name": "Обед", "color":"#FF0000", "slug": "obed"}},
+    {"model": "recipe.tag", "pk": 3, "fields":{"name": "Ужин", "color":"#FFD700", "slug": "uzhin"}},
 
     {"model": "recipe.ingredients", "pk": 2, "fields":{"name": "абрикосовое варенье", "measurement_unit": "г"}},
     {"model": "recipe.ingredients", "pk": 3, "fields":{"name": "абрикосовое пюре", "measurement_unit": "г"}},
