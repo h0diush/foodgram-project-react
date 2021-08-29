@@ -8,7 +8,11 @@ User = get_user_model()
 class Recipe(models.Model):
 
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, verbose_name='Автор', related_name='recipe')
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Автор',
+        related_name='recipe'
+    )
     name = models.CharField(max_length=255, verbose_name='Название')
     image = models.ImageField('Изображение', upload_to='recipes/')
     text = models.TextField('Описание')
@@ -82,10 +86,17 @@ class Follow(models.Model):
 
 class ShopList(models.Model):
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE,
-                             related_name='shops_list', verbose_name='Пользователь')
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE,
+        related_name='shops_list',
+        verbose_name='Пользователь'
+    )
     recipe = models.ForeignKey(
-        Recipe, on_delete=models.CASCADE, related_name='shops_list', verbose_name='Рецепты')
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='shops_list',
+        verbose_name='Рецепты'
+    )
 
     def __str__(self) -> str:
         return f'{self.user.username} -> {self.recipe}'
@@ -97,10 +108,16 @@ class ShopList(models.Model):
 
 class Favorite(models.Model):
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE,
-                             related_name='favorits', verbose_name='Пользователь')
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE,
+        related_name='favorits',
+        verbose_name='Пользователь'
+    )
     recipe = models.ForeignKey(
-        Recipe, on_delete=models.CASCADE, related_name='favorits', verbose_name='Избранный рецепты')
+        Recipe, on_delete=models.CASCADE,
+        related_name='favorits',
+        verbose_name='Избранный рецепты'
+    )
 
     def __str__(self) -> str:
         return f'{self.user.username} -> {self.recipe}'

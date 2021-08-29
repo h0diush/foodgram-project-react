@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from rest_framework import response, status
 
 from ..models import Follow, Recipe, ShopList, User
-from .serializers import UserFollowSerializer, RecipeFavoriteOrShopList
+from .serializers import RecipeFavoriteOrShopList, UserFollowSerializer
 
 
 def _get_recipe_in_shop_list_and_favorite(recipe, user, request, obj):
@@ -15,7 +15,9 @@ def _get_recipe_in_shop_list_and_favorite(recipe, user, request, obj):
         if request.method == 'GET':
             shop_list, created = obj.objects.get_or_create(
                 user=user, recipe=recipe)
-            return response.Response(serializer.data, status=status.HTTP_201_CREATED) if created else  \
+            return response.Response(
+                serializer.data, status=status.HTTP_201_CREATED
+            ) if created else  \
                 response.Response({"errors": "string"},
                                   status=status.HTTP_400_BAD_REQUEST)
 
@@ -27,11 +29,14 @@ def _get_recipe_in_shop_list_and_favorite(recipe, user, request, obj):
                 shop_list.delete()
                 return response.Response(
                     ({"detail": "Рецепт успешно удален из списка покупок"}
-                        if obj == ShopList else {"detail": "Рецепт успешно удален из избранного"}),
+                        if obj == ShopList else {
+                            "detail": "Рецепт успешно удален из избранного"
+                    }),
                     status=status.HTTP_204_NO_CONTENT
                 )
-            except:
-                return response.Response({"errors": "string"}, status=status.HTTP_400_BAD_REQUEST)
+            except BaseException:
+                return response.Response(
+                    {"errors": "string"}, status=status.HTTP_400_BAD_REQUEST)
 
         return response.Response(
             {"detail": "Учетные данные не были предоставлены."},
@@ -39,7 +44,7 @@ def _get_recipe_in_shop_list_and_favorite(recipe, user, request, obj):
         )
 
 
-def _user_subscription_to_post_author(author, user, request, obj):
+def _user_subscription_to_author(author, user, request, obj):
 
     if request.user.is_authenticated:
         if request.method == 'GET':
@@ -58,9 +63,11 @@ def _user_subscription_to_post_author(author, user, request, obj):
             try:
                 follow = Follow.objects.get(author=author, user=user)
                 follow.delete()
-                return response.Response("Успешная отписка", status=status.HTTP_204_NO_CONTENT)
-            except:
-                return response.Response({"errors": "string"}, status=status.HTTP_400_BAD_REQUEST)
+                return response.Response(
+                    "Успешная отписка", status=status.HTTP_204_NO_CONTENT)
+            except BaseException:
+                return response.Response(
+                    {"errors": "string"}, status=status.HTTP_400_BAD_REQUEST)
     return response.Response(
         {"detail": "Учетные данные не были предоставлены."},
         status=status.HTTP_403_FORBIDDEN
@@ -86,5 +93,6 @@ def _download_shop_list(user):
                     ingredient.measurement_unit
                 ]
             )
-    response_download['Content-Disposition'] = f'attachment; filename="shopping_list.csv"'
+    response_download['Content-Disposition'] =  \
+        f'attachment; filename="shopping_list.csv"'
     return response_download

@@ -13,7 +13,7 @@ from .serializers import (IngredientSerializer, RecipeSerializer,
                           TagSerializers, UserFollowSerializer)
 from .utilities import (_download_shop_list,
                         _get_recipe_in_shop_list_and_favorite,
-                        _user_subscription_to_post_author)
+                        _user_subscription_to_author)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -56,7 +56,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
     def shopping_cart(self, request, pk=None):
         recipe, user = self._get_user_and_recipe(request)
-        return _get_recipe_in_shop_list_and_favorite(recipe, user, request, ShopList)
+        return _get_recipe_in_shop_list_and_favorite(
+            recipe, user, request, ShopList)
 
     @action(
         methods=['GET', 'DELETE'],
@@ -65,7 +66,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
     def favorite(self, request, pk=None):
         recipe, user = self._get_user_and_recipe(request)
-        return _get_recipe_in_shop_list_and_favorite(recipe, user, request, Favorite)
+        return _get_recipe_in_shop_list_and_favorite(
+            recipe, user, request, Favorite)
 
     @action(detail=False, permission_classes=[IsAuthenticated])
     def download_shopping_cart(self, request):
@@ -81,10 +83,11 @@ class UserViewSet(BaseUserViewSet):
         user = request.user
         return author, user
 
-    @action(detail=True, permission_classes=[IsAuthenticated], methods=['GET', 'DELETE'])
+    @action(detail=True,
+            permission_classes=[IsAuthenticated], methods=['GET', 'DELETE'])
     def subscribe(self, request, id=None):
         author, user = self._get_user_and_author(request)
-        return _user_subscription_to_post_author(author, user, request, Follow)
+        return _user_subscription_to_author(author, user, request, Follow)
 
     @action(detail=False, permission_classes=[IsAuthenticated])
     def subscriptions(self, request):
