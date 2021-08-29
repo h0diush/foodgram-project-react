@@ -9,18 +9,14 @@ services:
       - ./.env
 
   frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
+    image: h0diush/foodgram_frontend
     volumes:
       - frontend_data:/app/build/
     depends_on:
       - db
 
   web:
-    build:
-      context: ../backend
-      dockerfile: Dockerfile
+    image: h0diush/foodgram_backend
     restart: always
     volumes:
       - static_value:/code/backend_static/
