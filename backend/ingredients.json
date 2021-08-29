@@ -1,4 +1,9 @@
-[{"model": "recipe.ingredients", "pk": 2, "fields":{"name": "абрикосовое варенье", "measurement_unit": "г"}},
+[
+    {"model": "recipe.tags", "pk": 1, "fields":{"name": "Завтрак", "color":"#00FF00", "slug": "zavtrak"}},
+    {"model": "recipe.tags", "pk": 2, "fields":{"name": "Обед", "color":"#FF0000", "slug": "obed"}},
+    {"model": "recipe.tags", "pk": 3, "fields":{"name": "Ужин", "color":"#FFD700", "slug": "uzhin"}},
+
+    {"model": "recipe.ingredients", "pk": 2, "fields":{"name": "абрикосовое варенье", "measurement_unit": "г"}},
     {"model": "recipe.ingredients", "pk": 3, "fields":{"name": "абрикосовое пюре", "measurement_unit": "г"}},
     {"model": "recipe.ingredients", "pk": 4, "fields":{"name": "абрикосовый джем", "measurement_unit": "г"}},
     {"model": "recipe.ingredients", "pk": 5, "fields":{"name": "абрикосовый сок", "measurement_unit": "стакан"}},
