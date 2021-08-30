@@ -14,7 +14,11 @@ router.register(r'users', UserViewSet, basename='user-list')
 
 
 urlpatterns = [
-    path('users/subscriptions/', UserFollowView.as_view(), name='subscriptions'),
+    path(
+        'users/subscriptions/',
+        UserFollowView.as_view(),
+        name='subscriptions'
+    ),
     path('', include(router.urls)),
-    
+
 ]
