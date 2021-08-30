@@ -1,6 +1,6 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet as BaseUserViewSet
-from rest_framework import response, status, viewsets
+from rest_framework import generics, viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -89,11 +89,17 @@ class UserViewSet(BaseUserViewSet):
         author, user = self._get_user_and_author(request)
         return _user_subscription_to_author(author, user, request, Follow)
 
-    @action(detail=False, permission_classes=[IsAuthenticated])
-    def subscriptions(self, request):
-        user = User.objects.filter(
-            follower__user=self.request.user)
-        page = self.paginate_queryset(user)
-        serializer = UserFollowSerializer(
-            page, context={'request': request}, many=True)
-        return response.Response(serializer.data, status=status.HTTP_200_OK)
+
+class UserFollowView(generics.ListAPIView):
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserFollowSerializer
+    pagination_class = LimitPageNumberPagination
+
+    def get_queryset(self):
+        return User.objects.filter(follower__user=self.request.user)
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({'request': self.request})
+        return context
