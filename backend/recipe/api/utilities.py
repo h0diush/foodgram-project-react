@@ -3,7 +3,7 @@ import csv
 from django.http import HttpResponse
 from rest_framework import response, status
 
-from ..models import Follow, Recipe, ShopList, User
+from ..models import Follow, IngredientRecord, Recipe, ShopList, User
 from .serializers import RecipeFavoriteOrShopList, UserFollowSerializer
 
 
@@ -83,16 +83,26 @@ def _download_shop_list(user):
             'Количество',
             'Единица измерения'
         ])
-    recipes = Recipe.objects.filter(shops_list__user=user)
-    for recipe in recipes:
-        for ingredient in recipe.ingredients.all():
-            writer.writerow(
-                [
-                    ingredient.name,
-                    ingredient.amount,
-                    ingredient.measurement_unit
-                ]
-            )
-    response_download['Content-Disposition'] =  \
-        f'attachment; filename="shopping_list.csv"'
-    return response_download
+    shop_list = user.shops_list.all()
+    buying_list = {}
+    for record in shop_list:
+        recipe = record.recipe
+        for ingredient in IngredientRecord.objects.filter(recipe=recipe):
+            amount = ingredient.amount
+            name = ingredient.ingredient.name
+            measurement_unit = ingredient.ingredient.measurement_unit
+            if name not in buying_list:
+                buying_list[name] = {
+                    'measurement_unit': measurement_unit,
+                    'amount': amount
+                }
+            else:
+                buying_list[name]['amount'] = (buying_list[name]['amount']
+                                               + amount)
+    wishlist = []
+    for name, data in buying_list.items():
+        wishlist.append(
+            f"{name} ({data['measurement_unit']}) - {data['amount']} \n")
+    response = HttpResponse(wishlist, content_type='text/plain')
+    response['Content-Disposition'] = 'attachment; filename="ShoppingList.txt"'
+    return response

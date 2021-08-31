@@ -130,8 +130,13 @@ class Favorite(models.Model):
 
 class IngredientRecord(models.Model):
 
-    ingredient = models.ForeignKey(Ingredients, on_delete=models.CASCADE)
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    ingredient = models.ForeignKey(
+        Ingredients,
+        on_delete=models.CASCADE,
+        related_name='ingredientsrecord'
+    )
+    recipe = models.ForeignKey(
+        Recipe, on_delete=models.CASCADE, related_name='ingredientsrecord')
     amount = models.FloatField()
 
     def __str__(self):
