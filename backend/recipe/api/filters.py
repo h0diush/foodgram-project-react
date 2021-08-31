@@ -51,11 +51,8 @@ class RecipeFilter(filters.FilterSet):
 
 class FollowFilter(filters.FilterSet):
 
-    recipes_limit = filters.CharFilter(
-        method='recipe_limit',
-        field_name='limit'
-    )
+    recipes_limit = filters.NumberFilter(method="recipes_limit_filter")
 
-    def recipe_limit(self, queryset, name, value):
-        count = int(value)
-        return queryset[:count]
+    def recipes_limit_filter(self, queryset, name, value):
+        qs = queryset.recipes(value)
+        return qs

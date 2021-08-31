@@ -216,7 +216,7 @@ class RecipeFollowSerializer(serializers.ModelSerializer):
 
 class UserFollowSerializer(serializers.ModelSerializer):
 
-    recipes = RecipeFollowSerializer(many=True, read_only=True)
+    recipes = serializers.SerializerMethodField()
     is_subscribed = serializers.SerializerMethodField('follow')
     recipes_count = serializers.SerializerMethodField('count')
 
@@ -236,6 +236,10 @@ class UserFollowSerializer(serializers.ModelSerializer):
     def count(self, obj):
         count = Recipe.objects.filter(author__username=obj.username).count()
         return count
+
+    def get_recipes(self, obj):
+        qs = Recipe.objects.filter(author__username=obj.username)
+        return RecipeFollowSerializer(qs, many=True).data
 
 
 class RecipeFavoriteOrShopList(serializers.ModelSerializer):
