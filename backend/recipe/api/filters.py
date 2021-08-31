@@ -37,7 +37,7 @@ class RecipeFilter(filters.FilterSet):
         return queryset.exclude(
             **{lookup: value}
         ).filter(
-            shops_list__user=self.request.user
+            shopping_list__user=self.request.user
         )
 
     def filter_favorited(self, queryset, name, value):
@@ -45,5 +45,5 @@ class RecipeFilter(filters.FilterSet):
         return queryset.exclude(
             **{lookup: value}
         ).filter(
-            favorits__user=self.request.user
+            favorites__user=self.request.user
         )
