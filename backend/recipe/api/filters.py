@@ -1,13 +1,13 @@
 import django_filters as filters
 
-from ..models import Ingredients
+from ..models import Ingredient
 
 
 class IngredientNameFilter(filters.FilterSet):
     name = filters.CharFilter(field_name='name', lookup_expr='istartswith')
 
     class Meta:
-        model = Ingredients
+        model = Ingredient
         fields = ('name', 'measurement_unit')
 
 
@@ -16,13 +16,13 @@ class RecipeFilter(filters.FilterSet):
     tags = filters.AllValuesMultipleFilter(field_name='tags__slug')
 
     is_favorited = filters.BooleanFilter(
-        field_name='favorits__recipe',
+        field_name='favorites__recipe',
         method='filter_favorited',
         lookup_expr='isnull'
     )
 
     is_in_shopping_cart = filters.BooleanFilter(
-        field_name='shops_list__recipe',
+        field_name='shopping_list__recipe',
         method='filter_shopping_cart',
         lookup_expr='isnull'
     )

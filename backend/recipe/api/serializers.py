@@ -3,7 +3,7 @@ from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
 
-from ..models import (Favorite, Follow, IngredientRecord, Ingredients, Recipe,
+from ..models import (Favorite, Follow, IngredientRecord, Ingredient, Recipe,
                       ShopList, Tag, User)
 
 
@@ -15,9 +15,10 @@ class UserCreateSerializer(serializers.ModelSerializer):
                   'first_name', 'last_name', 'password')
 
     def validate(self, attrs):
-        l_name, f_name, email = \
+        last_name, first_name, email = (
             attrs['last_name'], attrs['first_name'], attrs['email']
-        if l_name == '' or f_name == '':
+        )
+        if last_name == '' or first_name == '':
             raise serializers.ValidationError('This field is required')
         if User.objects.filter(email=email).exists():
             raise serializers.ValidationError(
@@ -65,7 +66,7 @@ class TagSerializers(serializers.ModelSerializer):
 
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Ingredients
+        model = Ingredient
         fields = '__all__'
 
 
@@ -102,15 +103,11 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def favorited(self, obj):
         request = self.context.get('request')
-        if Favorite.objects.filter(user=request.user, recipe=obj).exists():
-            return True
-        return False
+        return Favorite.objects.filter(user=request.user, recipe=obj).exists()
 
     def shopping_cart(self, obj):
         request = self.context.get('request')
-        if ShopList.objects.filter(user=request.user, recipe=obj).exists():
-            return True
-        return False
+        return ShopList.objects.filter(user=request.user, recipe=obj).exists()
 
     def validate(self, data):
         ingredients = self.initial_data.get('ingredients')
@@ -197,11 +194,7 @@ class UserFollowSerializer(serializers.ModelSerializer):
                   'recipes_count', )
 
     def follow(self, obj):
-        if (Follow.objects.filter(
-            author__username=obj.username
-        ).exists()):
-            return True
-        return False
+        return Follow.objects.filter(author__username=obj.username).exists()
 
     def count(self, obj):
         count = Recipe.objects.filter(author__username=obj.username).count()

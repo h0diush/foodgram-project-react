@@ -5,7 +5,7 @@ from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
-from ..models import Favorite, Follow, Ingredients, Recipe, ShopList, Tag, User
+from ..models import Favorite, Follow, Ingredient, Recipe, ShopList, Tag, User
 from .filters import IngredientNameFilter, RecipeFilter
 from .pagination import LimitPageNumberPagination
 from .permissions import IsAdminOrReadAnllyUser, IsAuthorRecipeOrReadOnly
@@ -26,7 +26,7 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 
 class IngredientViewSet(viewsets.ModelViewSet):
     serializer_class = IngredientSerializer
-    queryset = Ingredients.objects.all()
+    queryset = Ingredient.objects.all()
     pagination_class = None
     permission_classes = (AllowAny,)
     filterset_class = IngredientNameFilter
