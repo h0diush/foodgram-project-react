@@ -51,7 +51,10 @@ class RecipeFilter(filters.FilterSet):
 
 class FollowFilter(filters.FilterSet):
 
-    recipes_limit = filters.CharFilter(method='recipe_limit')
+    recipes_limit = filters.CharFilter(
+        method='recipe_limit',
+        field_name='limit'
+    )
 
     def recipe_limit(self, queryset, name, value):
         count = int(value)

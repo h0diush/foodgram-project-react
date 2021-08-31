@@ -1,3 +1,4 @@
+from django.db import transaction
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
@@ -141,25 +142,42 @@ class RecipeSerializer(serializers.ModelSerializer):
             return True
         return False
 
-    def validate(self, data):
-        ingredients = self.initial_data.get('ingredients')
-        ingredients_set = set()
-        for ingredient in ingredients:
-            if int(ingredient.get('amount')) <= 0:
-                raise serializers.ValidationError(
-                    ('Убедитесь, что значение количества '
-                     'ингредиента больше 0')
-                )
-            id = ingredient.get('id')
-            if id in ingredients_set:
-                raise serializers.ValidationError(
-                    'Ингредиент в рецепте не должен повторяться.'
-                )
-            ingredients_set.add(id)
-        data['ingredients'] = ingredients
+    def validate_tags(self, tags):
+        if not tags:
+            raise serializers.ValidationError(
+                "Рецепт не может быть без тегов."
+            )
 
-        return data
+        unique_tags = set(tags)
+        if len(unique_tags) != len(tags):
+            raise serializers.ValidationError(
+                "Массиов тегов должен быть уникальным."
+            )
+        return tags
 
+    def validate_ingredients(self, recipeingredients):
+        if not recipeingredients:
+            raise serializers.ValidationError(
+                "Рецепт не может быть без ингредиентов."
+            )
+
+        not_unique_ingredients = [
+            recipeingredient["ingredient"].id
+            for recipeingredient in recipeingredients
+        ]
+        unique_ingredients = set(not_unique_ingredients)
+
+        not_unique_ingredients_amount = len(not_unique_ingredients)
+        unique_ingredients_amount = len(unique_ingredients)
+
+        if unique_ingredients_amount != not_unique_ingredients_amount:
+            raise serializers.ValidationError(
+                "Каждый ингредиент в рецепте должен быть уникальным."
+            )
+
+        return recipeingredients
+
+    @transaction.atomic
     def create(self, validated_data):
         image = validated_data.pop('image')
         ingredients = validated_data.pop('ingredients')
@@ -178,6 +196,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
         return recipe
 
+    @transaction.atomic
     def update(self, instance, validated_data):
         instance.tags.clear()
         tags = self.initial_data.get('tags')
