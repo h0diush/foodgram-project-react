@@ -41,11 +41,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
     pagination_class = LimitPageNumberPagination
     serializer_class = RecipeSerializer
 
-    # def get_serializer_class(self):
-    #     if self.request.method == 'GET':
-    #         return ShowRecipeSerializer
-    #     return RecipeCreateSerializer
-
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
