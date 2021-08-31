@@ -10,8 +10,7 @@ from .filters import IngredientNameFilter, RecipeFilter
 from .pagination import LimitPageNumberPagination
 from .permissions import IsAdminOrReadAnllyUser, IsAuthorRecipeOrReadOnly
 from .serializers import (IngredientSerializer, RecipeSerializer,
-                          ShowRecipeSerializer, TagSerializers,
-                          UserFollowSerializer)
+                          TagSerializers, UserFollowSerializer)
 from .utilities import (_download_shop_list,
                         _get_recipe_in_shop_list_and_favorite,
                         _user_subscription_to_author)
