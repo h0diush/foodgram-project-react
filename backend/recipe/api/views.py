@@ -9,7 +9,7 @@ from ..models import Favorite, Follow, Ingredients, Recipe, ShopList, Tag, User
 from .filters import IngredientNameFilter, RecipeFilter
 from .pagination import LimitPageNumberPagination
 from .permissions import IsAdminOrReadAnllyUser, IsAuthorRecipeOrReadOnly
-from .serializers import (IngredientSerializer, RecipeCreateSerializer,
+from .serializers import (IngredientSerializer, RecipeSerializer,
                           ShowRecipeSerializer, TagSerializers,
                           UserFollowSerializer)
 from .utilities import (_download_shop_list,
@@ -40,11 +40,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_class = RecipeFilter
     pagination_class = LimitPageNumberPagination
+    serializer_class = RecipeSerializer
 
-    def get_serializer_class(self):
-        if self.request.method == 'GET':
-            return ShowRecipeSerializer
-        return RecipeCreateSerializer
+    # def get_serializer_class(self):
+    #     if self.request.method == 'GET':
+    #         return ShowRecipeSerializer
+    #     return RecipeCreateSerializer
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
