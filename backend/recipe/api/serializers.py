@@ -142,40 +142,24 @@ class RecipeSerializer(serializers.ModelSerializer):
             return True
         return False
 
-    def validate_tags(self, tags):
-        if not tags:
-            raise serializers.ValidationError(
-                "Рецепт не может быть без тегов."
-            )
+    def validate(self, data):
+        ingredients = self.initial_data.get('ingredients')
+        ingredients_set = set()
+        for ingredient in ingredients:
+            if int(ingredient.get('amount')) <= 0:
+                raise serializers.ValidationError(
+                    ('Убедитесь, что значение количества '
+                     'ингредиента больше 0')
+                )
+            id = ingredient.get('id')
+            if id in ingredients_set:
+                raise serializers.ValidationError(
+                    'Ингредиент в рецепте не должен повторяться.'
+                )
+            ingredients_set.add(id)
+        data['ingredients'] = ingredients
 
-        unique_tags = set(tags)
-        if len(unique_tags) != len(tags):
-            raise serializers.ValidationError(
-                "Массиов тегов должен быть уникальным."
-            )
-        return tags
-
-    def validate_ingredients(self, recipeingredients):
-        if not recipeingredients:
-            raise serializers.ValidationError(
-                "Рецепт не может быть без ингредиентов."
-            )
-
-        not_unique_ingredients = [
-            recipeingredient["ingredient"].id
-            for recipeingredient in recipeingredients
-        ]
-        unique_ingredients = set(not_unique_ingredients)
-
-        not_unique_ingredients_amount = len(not_unique_ingredients)
-        unique_ingredients_amount = len(unique_ingredients)
-
-        if unique_ingredients_amount != not_unique_ingredients_amount:
-            raise serializers.ValidationError(
-                "Каждый ингредиент в рецепте должен быть уникальным."
-            )
-
-        return recipeingredients
+        return data
 
     @transaction.atomic
     def create(self, validated_data):
