@@ -222,7 +222,6 @@ class UserFollowSerializer(serializers.ModelSerializer):
         fields = ('email', 'id', 'username', 'first_name',
                   'last_name', 'recipes', 'is_subscribed',
                   'recipes_count', )
-    
 
     def follow(self, obj):
         if (Follow.objects.filter(
