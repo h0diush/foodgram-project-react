@@ -48,6 +48,7 @@ class RecipeFilter(filters.FilterSet):
             favorits__user=self.request.user
         )
 
+
 class FollowFilter(filters.FilterSet):
 
     recipes_limit = filters.CharFilter(method='recipe_limit')
