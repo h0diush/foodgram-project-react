@@ -1,4 +1,4 @@
-# FOODGRAM PROJECT - [«Продуктовый помощник»](http://foodgramrecipes.tk/).
+# FOODGRAM PROJECT - [«Продуктовый помощник»](http://www.myrecipesfoodgram.ga/).
 ____
 [![Build Status](https://travis-ci.com/h0diush/foodgram-project-react.svg?branch=master)](https://travis-ci.com/h0diush/foodgram-project-react)
 
