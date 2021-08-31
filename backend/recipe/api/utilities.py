@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import response, status
 
-from ..models import Follow, IngredientRecord, Recipe, ShopList, User
+from ..models import Follow, Recipe, ShopList, User
 from .serializers import RecipeFavoriteOrShopList, UserFollowSerializer
 
 
