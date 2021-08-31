@@ -48,6 +48,10 @@ class RecipeFilter(filters.FilterSet):
             favorits__user=self.request.user
         )
 
+class FollowFilter(filters.FilterSet):
+
+    recipes_limit = filters.CharFilter(method='recipe_limit')
+
     def recipe_limit(self, queryset, name, value):
         count = int(value)
         return queryset[:count]
