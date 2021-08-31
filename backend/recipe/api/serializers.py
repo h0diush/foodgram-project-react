@@ -80,24 +80,12 @@ class IngredientInRecipeSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'amount', 'measurement_unit')
 
 
-class RecipeSerializer(serializers.ModelSerializer):
-
+class ShowRecipeSerializer(serializers.ModelSerializer):
+    tags = TagSerializers(many=True, read_only=True)
     author = UserSerializer(read_only=True)
-    image = Base64ImageField()
-    tags = TagSerializers(read_only=True, many=True)
-    ingredients = IngredientInRecipeSerializer(
-        source='ingredients_amounts',
-        many=True, read_only=True,
-    )
+    ingredients = serializers.SerializerMethodField()
     is_favorited = serializers.SerializerMethodField('favorited')
     is_in_shopping_cart = serializers.SerializerMethodField('shopping_cart')
-
-    class Meta:
-        model = Recipe
-        fields = ('id', 'tags', 'author', 'ingredients', 'is_favorited',
-                  'is_in_shopping_cart', 'name', 'image',
-                  'text', 'cooking_time'
-                  )
 
     def favorited(self, obj):
         request = self.context.get('request')
@@ -110,6 +98,32 @@ class RecipeSerializer(serializers.ModelSerializer):
         if ShopList.objects.filter(user=request.user, recipe=obj).exists():
             return True
         return False
+
+    def get_ingredients(self, obj):
+        qs = IngredientRecord.objects.filter(recipe=obj)
+        return IngredientInRecipeSerializer(qs, many=True).data
+
+    class Meta:
+        model = Recipe
+        fields = ('id', 'tags', 'author', 'ingredients',
+                  'is_favorited', 'is_in_shopping_cart',
+                  'name', 'image', 'text', 'cooking_time')
+
+
+class RecipeCreateSerializer(serializers.ModelSerializer):
+
+    author = UserSerializer(read_only=True)
+    image = Base64ImageField()
+    tags = serializers.PrimaryKeyRelatedField(
+        queryset=Tag.objects.all(), many=True)
+    ingredients = IngredientSerializer(many=True)
+
+    class Meta:
+        model = Recipe
+        fields = ('id', 'tags', 'author', 'ingredients',
+                  'name', 'image',
+                  'text', 'cooking_time'
+                  )
 
     def validate(self, data):
         ingredients = self.initial_data.get('ingredients')
@@ -174,7 +188,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         return instance
 
     def to_representation(self, instance):
-        return RecipeSerializer(
+        return ShowRecipeSerializer(
             instance,
             context={
                 'request': self.context.get('request')
