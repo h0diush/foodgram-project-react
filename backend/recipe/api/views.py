@@ -6,7 +6,7 @@ from rest_framework.filters import SearchFilter
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from ..models import Favorite, Follow, Ingredients, Recipe, ShopList, Tag, User
-from .filters import FollowFilter, IngredientNameFilter, RecipeFilter
+from .filters import IngredientNameFilter, RecipeFilter
 from .pagination import LimitPageNumberPagination
 from .permissions import IsAdminOrReadAnllyUser, IsAuthorRecipeOrReadOnly
 from .serializers import (IngredientSerializer, RecipeSerializer,
@@ -100,8 +100,6 @@ class UserFollowView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = UserFollowSerializer
     pagination_class = LimitPageNumberPagination
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = FollowFilter
 
     def get_queryset(self):
         return User.objects.filter(follower__user=self.request.user)

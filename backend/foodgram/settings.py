@@ -4,17 +4,10 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-# from rest_framework.pagination import LimitOffsetPagination
 load_dotenv()
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-3b!g=9(qiz8v%qd^&fzidwsl^rx#%cvqt+a0h6q7oz!t*6#-))'
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -74,9 +67,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
@@ -96,9 +86,6 @@ DATABASES = {
     }
 }
 
-
-# Password validation
-# https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -168,7 +155,6 @@ DJOSER = {
 
 }
 
-# CurrentUserOrAdminOrReadOnly  IsAuthenticatedOrReadOnly
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=10),
@@ -205,13 +191,8 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
 
-# Following is added to enable registration with email instead of username
 AUTHENTICATION_BACKENDS = (
-    # Needed to login by username in Django admin, regardless of `allauth`
     "django.contrib.auth.backends.ModelBackend",
-
-    # `allauth` specific authentication methods, such as login by e-mail
-    #  "allauth.account.auth_backends.AuthenticationBackend",
 )
 
 EMAIL_USE_TLS = True
@@ -220,8 +201,6 @@ EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = os.environ.get('EMAIL_PORT')
 
-# Internationalization
-# https://docs.djangoproject.com/en/3.2/topics/i18n/
 
 LANGUAGE_CODE = 'ru'
 
@@ -234,23 +213,14 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
-
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'backend_static')
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-# STATICFILES_DIRS = (
-#   os.path.join(BASE_DIR, 'static/'),
-# )
-
 
 BASE_URL = 'http://api.foodgram.students.nomoredomains.icu'
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

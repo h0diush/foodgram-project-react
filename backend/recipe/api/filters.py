@@ -47,12 +47,3 @@ class RecipeFilter(filters.FilterSet):
         ).filter(
             favorits__user=self.request.user
         )
-
-
-class FollowFilter(filters.FilterSet):
-
-    recipes_limit = filters.NumberFilter(method="recipes_limit_filter")
-
-    def recipes_limit_filter(self, queryset, name, value):
-        qs = queryset.recipes(value)
-        return qs
