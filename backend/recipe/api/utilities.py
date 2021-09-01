@@ -10,7 +10,8 @@ from .serializers import RecipeFavoriteOrShopList, UserFollowSerializer
 
 def _get_recipe_in_shop_list_and_favorite(recipe, user, request, obj):
 
-    serializer = RecipeFavoriteOrShopList(Recipe.objects.get(pk=recipe.id))
+    serializer = RecipeFavoriteOrShopList(
+        get_object_or_404(Recipe, pk=recipe.id))
 
     if request.method == 'GET':
         shop_list, created = obj.objects.get_or_create(
@@ -37,7 +38,7 @@ def _get_recipe_in_shop_list_and_favorite(recipe, user, request, obj):
 def _user_subscription_to_author(author, user, request, obj):
 
     serializer = UserFollowSerializer(
-        User.objects.get(username=author.username))
+        get_object_or_404(User, username=author.username))
 
     if request.method == 'GET':
         follow, created = obj.objects.get_or_create(
