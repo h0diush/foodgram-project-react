@@ -5,6 +5,7 @@ from rest_framework.generics import get_object_or_404
 
 from ..models import (Favorite, Follow, IngredientRecord, Ingredient, Recipe,
                       ShopList, Tag, User)
+from foodgram import settings
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
@@ -202,15 +203,14 @@ class UserFollowSerializer(serializers.ModelSerializer):
         return count
 
     def get_recipes(self, obj):
-        request = self.context['request']
-        recipes_limit = request.query_params.get("recipes_limit")
-        if recipes_limit is None:
-            result = Recipe.objects.filter(author__username=obj.username)
-        else:
-            recipes_limit = int(request.query_params.get("recipes_limit"))
-            result = Recipe.objects.filter(author__username=obj.username)[
-                :recipes_limit]
-        return RecipeFollowSerializer(result, many=True).data
+        recipes = Recipe.objects.filter(author__username=obj.username)[
+            :settings.RECIPES_LIMIT]
+        request = self.context.get('request')
+        context = {'request': request}
+        return RecipeFollowSerializer(
+            recipes,
+            many=True,
+            context=context).data
 
 
 class RecipeFavoriteOrShopList(serializers.ModelSerializer):
