@@ -186,24 +186,6 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
                   'is_favorited', 'is_in_shopping_cart',
                   'name', 'image', 'text', 'cooking_time')
 
-    def get_ingredients(self, obj):
-        qs = IngredientRecord.objects.filter(recipe=obj)
-        return IngredientInRecipeSerializer(qs, many=True).data
-
-    def get_is_favorited(self, obj):
-        request = self.context.get('request')
-        if request is None or request.user.is_anonymous:
-            return False
-        user = request.user
-        return Favorite.objects.filter(recipe=obj, user=user).exists()
-
-    def get_is_in_shopping_cart(self, obj):
-        request = self.context.get('request')
-        if request is None or request.user.is_anonymous:
-            return False
-        user = request.user
-        return ShopList.objects.filter(recipe=obj, user=user).exists()
-
 
 class AddIngredientToRecipeSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField()
