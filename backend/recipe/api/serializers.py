@@ -97,10 +97,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = ('id', 'tags', 'author', 'ingredients', 'is_favorited',
-                  'is_in_shopping_cart', 'name', 'image',
-                  'text', 'cooking_time'
-                  )
+        fields = '__all__'
 
     def favorited(self, obj):
         request = self.context.get('request')
@@ -129,7 +126,6 @@ class RecipeSerializer(serializers.ModelSerializer):
 
         return data
 
-    @transaction.atomic
     def create(self, validated_data):
         image = validated_data.pop('image')
         ingredients = validated_data.pop('ingredients')
@@ -148,7 +144,6 @@ class RecipeSerializer(serializers.ModelSerializer):
 
         return recipe
 
-    @transaction.atomic
     def update(self, instance, validated_data):
         instance.tags.clear()
         tags = self.initial_data.get('tags')
@@ -171,7 +166,6 @@ class RecipeSerializer(serializers.ModelSerializer):
         instance.text = validated_data.get('text')
         instance.cooking_time = validated_data.get('cooking_time')
         instance.save()
-        instance.refresh_from_db()
 
         return instance
 

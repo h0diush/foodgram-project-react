@@ -1,3 +1,4 @@
+from django.db.models import Exists, OuterRef
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet as BaseUserViewSet
 from rest_framework import generics, viewsets
@@ -40,6 +41,21 @@ class RecipeViewSet(viewsets.ModelViewSet):
     filterset_class = RecipeFilter
     pagination_class = LimitPageNumberPagination
     serializer_class = RecipeSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_anonymous:
+            return Recipe.objects.all()
+        queryset = Recipe.objects.annotate(
+            is_favorited=Exists(Favorite.objects.filter(
+                user=user, recipe_id=OuterRef('pk')
+            )),
+            is_in_shopping_cart=Exists(ShopList.objects.filter(
+                user=user, recipe_id=OuterRef('pk')
+            ))
+        )
+
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
