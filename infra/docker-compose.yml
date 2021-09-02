@@ -19,7 +19,9 @@ services:
       - db
 
   web:
-    image: h0diush/foodgram_backend
+    build:
+      context: '../backend'
+      dockerfile: 'Dockerfile'
     restart: always
     volumes:
       - static_value:/code/backend_static/
