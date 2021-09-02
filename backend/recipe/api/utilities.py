@@ -69,17 +69,17 @@ def _download_shop_list(user):
             'Единица измерения'
         ])
     shop_list = list(user.shopping_list.values(
-        'recipe__ingredients__name',
-        'recipe__ingredients__ingredientrecord__amount',
-
-        'recipe__ingredients__measurement_unit',
+        'recipe__ingredientrecord__ingredient__name',
+        'recipe__ingredientrecord__amount',
+        'recipe__ingredientrecord__ingredient__measurement_unit',
     ))
+    print(shop_list)
     wishlist = []
     for data in shop_list:
         wishlist.append(
-            f"{data['recipe__ingredients__name']} "
-            f"({data['recipe__ingredients__ingredientrecord__amount']})"
-            f" - {data['recipe__ingredients__measurement_unit']} \n")
+            f"{data['recipe__ingredientrecord__ingredient__name']} "
+            f"({data['recipe__ingredientrecord__amount']})"
+            f" - {data['recipe__ingredientrecord__ingredient__measurement_unit']} \n")
     response = HttpResponse(wishlist, content_type='text/plain')
     response['Content-Disposition'] = 'attachment; filename="ShoppingList.txt"'
     return response
