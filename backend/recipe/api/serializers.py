@@ -170,6 +170,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         instance.text = validated_data.get('text')
         instance.cooking_time = validated_data.get('cooking_time')
         instance.save()
+        instance.refresh_from_db()
 
         return instance
 
@@ -201,8 +202,15 @@ class UserFollowSerializer(serializers.ModelSerializer):
         return count
 
     def get_recipes(self, obj):
-        qs = Recipe.objects.filter(author__username=obj.username)
-        return RecipeFollowSerializer(qs, many=True).data
+        request = self.context['request']
+        recipes_limit = request.query_params.get("recipes_limit")
+        if recipes_limit is None:
+            result = Recipe.objects.filter(author__username=obj.username)
+        else:
+            recipes_limit = int(request.query_params.get("recipes_limit"))
+            result = Recipe.objects.filter(author__username=obj.username)[
+                :recipes_limit]
+        return RecipeFollowSerializer(result, many=True).data
 
 
 class RecipeFavoriteOrShopList(serializers.ModelSerializer):
