@@ -72,9 +72,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         context.update({'request': self.request})
         return context
 
-    def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
-
     def _get_user_and_recipe(self, request):
         user = request.user
         recipe = self.get_object()
