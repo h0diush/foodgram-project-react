@@ -1,7 +1,7 @@
 from django.db.models import Exists, OuterRef
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet as BaseUserViewSet
-from rest_framework import generics, viewsets
+from rest_framework import generics, response, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -41,6 +41,31 @@ class RecipeViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_class = RecipeFilter
     pagination_class = LimitPageNumberPagination
+
+    def create(self, request, *args, **kwargs):
+        try:
+            super().create(request, *args, **kwargs)
+            return response.Response(
+                {'message': "Рецепт создан"}, status=status.HTTP_201_CREATED
+            )
+        except ValueError as error:
+            return response.Response(
+                {'messages': error},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+    def update(self, request, *args, **kwargs):
+        try:
+            super().update(request, *args, **kwargs)
+            return response.Response(
+                {'messages': 'Рецепт обнавлен'},
+                status=status.HTTP_205_RESET_CONTENT
+            )
+        except ValueError as error:
+            return response.Response(
+                {'messages': error},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     def get_queryset(self):
         user = self.request.user
