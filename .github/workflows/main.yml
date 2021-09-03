@@ -81,9 +81,9 @@ jobs:
             echo EMAIL_PORT=${{ secrets.EMAIL_PORT }} >> .env
 
             sudo docker-compose up -d
-            sudo docker-compose exec -T web python manage.py flush --no-input
             sudo docker-compose exec -T web python manage.py makemigrations
             sudo docker-compose exec -T web python manage.py migrate --noinput
+            sudo docker-compose exec -T web python manage.py flush --no-input
             sudo docker-compose exec -T web python manage.py loaddata ingredients1.json
             sudo docker-compose exec -T web python manage.py collectstatic --no-input   
   send_message:
