@@ -50,7 +50,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             )
         except ValueError as error:
             return response.Response(
-                {'messages': error},
+                {'message': error},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
@@ -63,7 +63,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             )
         except ValueError as error:
             return response.Response(
-                {'messages': error},
+                {'message': error},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
@@ -81,11 +81,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         )
 
         return queryset
-
-    # def get_serializer_class(self):
-    #     if self.request.method in ['POST', 'PATH']:
-    #         return CreateRecipeSerializer
-    #     return RecipeSerializer
 
     def get_serializer_class(self):
         if self.action in ['list', 'retrieve']:

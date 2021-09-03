@@ -1,6 +1,5 @@
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
-# from rest_framework.generics import get_object_or_404
 
 from ..models import (Favorite, Follow, IngredientRecord, Ingredient, Recipe,
                       ShopList, Tag, User)
@@ -185,6 +184,26 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
         fields = ('id', 'tags', 'author', 'ingredients',
                   'is_favorited', 'is_in_shopping_cart',
                   'name', 'image', 'text', 'cooking_time')
+
+    def favorited(self, obj):
+        request = self.context.get('request')
+        if request is None or request.user.is_anonymous:
+            return False
+        return Favorite.objects.filter(user=request.user, recipe=obj).exists()
+
+    def shopping_cart(self, obj):
+        request = self.context.get('request')
+        if request is None or request.user.is_anonymous:
+            return False
+        return ShopList.objects.filter(user=request.user, recipe=obj).exists()
+
+    def get_ingredients(self, obj):
+        qs = IngredientRecord.objects.filter(recipe=obj)
+        return IngredientInRecipeSerializerToCreateRecipe(qs, many=True).data
+
+    def get_ingredients(self, obj):
+        qs = IngredientRecord.objects.filter(recipe=obj)
+        return IngredientInRecipeSerializerToCreateRecipe(qs, many=True).data
 
 
 class AddIngredientToRecipeSerializer(serializers.ModelSerializer):
