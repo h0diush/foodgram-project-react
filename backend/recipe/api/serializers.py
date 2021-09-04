@@ -1,9 +1,9 @@
 from drf_extra_fields.fields import Base64ImageField
+from foodgram import settings
 from rest_framework import serializers
 
-from ..models import (Favorite, Follow, IngredientRecord, Ingredient, Recipe,
+from ..models import (Favorite, Follow, Ingredient, IngredientRecord, Recipe,
                       ShopList, Tag, User)
-from foodgram import settings
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
@@ -196,10 +196,6 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
         if request is None or request.user.is_anonymous:
             return False
         return ShopList.objects.filter(user=request.user, recipe=obj).exists()
-
-    def get_ingredients(self, obj):
-        qs = IngredientRecord.objects.filter(recipe=obj)
-        return IngredientInRecipeSerializerToCreateRecipe(qs, many=True).data
 
     def get_ingredients(self, obj):
         qs = IngredientRecord.objects.filter(recipe=obj)
