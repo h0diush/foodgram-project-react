@@ -60,14 +60,6 @@ def _user_subscription_to_author(author, user, request, obj):
 
 
 def _download_shop_list(user):
-    response_download = HttpResponse(content_type='text/csv')
-    writer = csv.writer(response_download)
-    writer.writerow(
-        [
-            'Название',
-            'Количество',
-            'Единица измерения'
-        ])
     shop_list = list(user.shopping_list.values(
         'recipe__ingredientrecord__ingredient__name',
         'recipe__ingredientrecord__amount',
@@ -75,11 +67,24 @@ def _download_shop_list(user):
     ))
     print(shop_list)
     wishlist = []
+    ingredients_list = {}
     for data in shop_list:
+        name = data['recipe__ingredientrecord__ingredient__name']
+        amount = data['recipe__ingredientrecord__amount']
+        measurement_unit = data['recipe__ingredientrecord__ingredient__measurement_unit']
+        if name not in ingredients_list:
+            ingredients_list[name] = {
+                'measurement_unit': measurement_unit,
+                'amount': amount,
+            }
+        else:
+            ingredients_list[name]["amount"] += ingredients_list[name]['amount']
+
+    for name, data in ingredients_list.items():
+
         wishlist.append(
-            f"{data['recipe__ingredientrecord__ingredient__name']} "
-            f"({data['recipe__ingredientrecord__amount']})"
-            f" - {data['recipe__ingredientrecord__ingredient__measurement_unit']} \n")
+            f"{name} - {data['amount']} {data['measurement_unit']}\n"
+        )
     response = HttpResponse(wishlist, content_type='text/plain')
     response['Content-Disposition'] = 'attachment; filename="ShoppingList.txt"'
     return response
